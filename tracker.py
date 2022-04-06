@@ -10,16 +10,16 @@ class Tracker:
 
     def compile_analytics_by_user(self, username, weeks_ago=4):
         analytics = {"commits":0, "additions": 0, "deletions": 0, "total": 0}
-        user_id = self.gitlab.get_user_by_username(username)["id"]
-        contributions = self.gitlab.get_user_contributions(user_id, weeks_ago)
+        user = self.gitlab.get_user_by_username(username)
+        contributions = self.gitlab.get_user_contributions(user, weeks_ago)
         analytics["commits"] = len(contributions)
 
         for contribution in contributions:
-            project_id = contribution["project_id"]
+            project = contribution
 
             if "push_data" in contribution:
                 commit_hash = contribution["push_data"]["commit_to"]
-                commit = self.gitlab.get_commit(project_id, commit_hash)
+                commit = self.gitlab.get_commit(project, commit_hash)
 
                 if "stats" in commit:
                     analytics["additions"] += commit["stats"]["additions"]
@@ -29,9 +29,68 @@ class Tracker:
         return analytics
 
 
-    def compile_analytics_by_project(self, project_id, weeks_ago=4, sort=True):
+    def dataset_user_contributions(self, username, weeks_ago=4):
+        analytics = {"additions": [], "deletions": [], "total": []}
+        dates = list()
+        user = self.gitlab.get_user_by_username(username)
+        contributions = self.gitlab.get_user_contributions(user, weeks_ago)
+        for contribution in contributions:
+            project = contribution
+
+            if "push_data" in contribution:
+                commit_hash = contribution["push_data"]["commit_to"]
+                commit = self.gitlab.get_commit(project, commit_hash)
+
+                if "stats" in commit:
+                    date = str(parser.parse(commit["created_at"]).strftime("%Y-%m-%d %H:%M"))
+                    analytics["additions"].append(commit["stats"]["additions"])
+                    analytics["deletions"].append(commit["stats"]["deletions"])
+                    analytics["total"].append(commit["stats"]["total"])
+                    dates.append(date)
+
+        return analytics, dates
+
+
+    def compile_analytics_by_user_project_contributions(self, username, sort=True, weeks_ago=4):
         analytics = list()
-        contributions = self.gitlab.get_project_contributions(project_id, weeks_ago)
+        user = self.gitlab.get_user_by_username(username)
+        contributions = self.gitlab.get_user_contributions(user, weeks_ago)
+
+        for contribution in contributions:
+            project = contribution
+            project_info = self.gitlab.get_project_by_id(project)
+            project_name = project_info["name"]
+            if not any(dataset["project"] == project_name for dataset in analytics):
+                analytics.append(
+                    {
+                        "project_id": project_info["id"],
+                        "link": project_info["web_url"],
+                        "project": project_name,
+                        "additions": 0,
+                        "deletions": 0,
+                        "total": 0
+                    }
+                )
+
+            for dataset in analytics:
+                if contribution["project_id"] == dataset["project_id"]:
+                    if "push_data" in contribution:
+                        commit_hash = contribution["push_data"]["commit_to"]
+                        commit = self.gitlab.get_commit(project, commit_hash)
+
+                        if "stats" in commit:
+                            dataset["additions"] += commit["stats"]["additions"]
+                            dataset["deletions"] += commit["stats"]["deletions"]
+                            dataset["total"] += commit["stats"]["total"]
+        if sort:
+            analytics = sorted(analytics, key=lambda contribution: contribution["total"], reverse=True)
+
+        return analytics
+
+
+    def compile_analytics_by_project(self, project, weeks_ago=4, sort=True):
+        analytics = list()
+        contributions = self.gitlab.get_project_contributions(project, weeks_ago)
         for contribution in contributions:
             user = contribution["author"]["name"]
             if not any(dataset["author"] == user for dataset in analytics):
@@ -50,7 +109,7 @@ class Tracker:
                 if contribution["author"]["name"] == dataset["author"]:
                     if "push_data" in contribution:
                         commit_hash = contribution["push_data"]["commit_to"]
-                        commit = self.gitlab.get_commit(project_id, commit_hash)
+                        commit = self.gitlab.get_commit(project, commit_hash)
 
                         if "stats" in commit:
                             dataset["additions"] += commit["stats"]["additions"]
@@ -63,32 +122,9 @@ class Tracker:
         return analytics
 
 
-    def dataset_user_contributions(self, username, weeks_ago=4):
-        analytics = {"additions": [], "deletions": [], "total": []}
-        dates = list()
-        user_id = self.gitlab.get_user_by_username(username)["id"]
-        contributions = self.gitlab.get_user_contributions(user_id, weeks_ago)
-
-        for contribution in contributions:
-            project_id = contribution["project_id"]
-
-            if "push_data" in contribution:
-                commit_hash = contribution["push_data"]["commit_to"]
-                commit = self.gitlab.get_commit(project_id, commit_hash)
-
-                if "stats" in commit:
-                    date = str(parser.parse(commit["created_at"]).strftime("%Y-%m-%d %H:%M"))
-                    analytics["additions"].append(commit["stats"]["additions"])
-                    analytics["deletions"].append(commit["stats"]["deletions"])
-                    analytics["total"].append(commit["stats"]["total"])
-                    dates.append(date)
-
-        return analytics, dates
-
-
-    def dataset_analytics_by_project(self, project_id, weeks_ago=4):
+    def dataset_analytics_by_project(self, project, weeks_ago=4):
         analytics = list()
-        contributions = self.gitlab.get_project_contributions(project_id, weeks_ago)
+        contributions = self.gitlab.get_project_contributions(project, weeks_ago)
         for contribution in contributions:
             user = contribution["author"]["name"]
             if not any(dataset["author"] == user for dataset in analytics):
@@ -108,7 +144,7 @@ class Tracker:
                 if contribution["author"]["name"] == dataset["author"]:
                     if "push_data" in contribution:
                         commit_hash = contribution["push_data"]["commit_to"]
-                        commit = self.gitlab.get_commit(project_id, commit_hash)
+                        commit = self.gitlab.get_commit(project, commit_hash)
 
                         if "stats" in commit:
                             date = str(parser.parse(commit["created_at"]).strftime("%Y-%m-%d %H:%M"))
@@ -131,3 +167,4 @@ class Tracker:
             data["Total"].append(user_analytics["total"])
 
         return data
+

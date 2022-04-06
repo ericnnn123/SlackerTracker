@@ -45,14 +45,20 @@ class Gitlab:
         return users
 
 
-    def get_user_by_id(self, id):
-        endpoint = f"/users/{id}"
+    def get_user_by_id(self, user):
+        endpoint = f"/users/{user['id']}"
         user = self.session.get(self.base_url + endpoint).json()
         return user
 
 
-    def get_user_contributions(self, id, weeks_ago=4):
-        endpoint = f"/users/{id}/events"
+    def get_users_projects(self, user):
+        endpoint = f"/users/{user['id']}/projects"
+        projects = self.session.get(self.base_url + endpoint).json()
+        return projects
+
+
+    def get_user_contributions(self, user, weeks_ago=4):
+        endpoint = f"/users/{user['id']}/events"
         today = date.today()
         date_to_check = today - timedelta(7 * weeks_ago)
         payload = {
@@ -79,14 +85,22 @@ class Gitlab:
         return projects
 
 
-    def get_project_users(self, id):
-        endpoint = f"/project/{id}/users"
+    def get_project_by_id(self, project):
+        projects = self.get_projects()
+        for query in projects:
+            if project["project_id"] == query["id"]:
+                return query
+        raise Exception("project id could not be located")
+
+
+    def get_project_users(self, project):
+        endpoint = f"/project/{project['id']}/users"
         users = self.session.get(self.base_url + endpoint).json()
         return users
 
 
-    def get_project_contributions(self, id, weeks_ago=4):
-        endpoint = f"/projects/{id}/events"
+    def get_project_contributions(self, project, weeks_ago=4):
+        endpoint = f"/projects/{project['id']}/events"
         today = date.today()
         date_to_check = today - timedelta(7 * weeks_ago)
         payload = {
@@ -97,7 +111,7 @@ class Gitlab:
         return events
 
 
-    def get_commit(self, project_id, commit_hash):
-        endpoint = f"/projects/{project_id}/repository/commits/{commit_hash}"
+    def get_commit(self, project, commit_hash):
+        endpoint = f"/projects/{project['project_id']}/repository/commits/{commit_hash}"
         commits = self.session.get(self.base_url + endpoint).json()
         return commits

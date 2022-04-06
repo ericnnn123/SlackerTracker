@@ -3,8 +3,8 @@ import streamlit
 
 from tracker import Tracker
 from gitlab import Gitlab
-from apps.dashboard import dashboard
-from apps.users import users
+from apps.dashboard import Dashboard
+from apps.users import Users
 
 gitlab = Gitlab()
 tracker = Tracker(gitlab)
@@ -17,10 +17,10 @@ with streamlit.sidebar:
     )
 
 if select == "Dashboard":
-    dashboard(gitlab, tracker)    
+    Dashboard(gitlab, tracker).dashboard()    
 
 if select == "Users":
-    users(gitlab, tracker)
+    Users(gitlab, tracker).users()
     
 
 if select == "Projects":
