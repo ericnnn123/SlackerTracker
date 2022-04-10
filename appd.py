@@ -1,10 +1,11 @@
+from importlib_metadata import Deprecated
 import pandas
 import streamlit
 
 from tracker import Tracker
 from gitlab import Gitlab
-from apps.dashboard import Dashboard
-from apps.users import Users
+from appsd.dashboard import Dashboard
+from appsd.users import Users
 
 gitlab = Gitlab()
 tracker = Tracker(gitlab)

@@ -116,6 +116,8 @@ class Users:
         else:
             c1, c2, c3, c4, c5 = streamlit.columns(5)
             for project in projects:
+                with c1:
+                    pass
                 with c2:
                     streamlit.markdown(f"[{project['project']}]({project['link']})")
                 with c3:

@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+{% block dashboard_active %}active{% endblock %}
+
+{% block content %}
+<div class="row align-items-center">
+  <div class="row justify-content-center">
+    <div class="col">
+      <div class="card border-success mb-3" style="max-width: 18rem;">
+        
+        <div class="card-body">
+          <div class="card-header">Hardest Worker</div>
+          <div class="text-center">
+            <img src="{{worker.img}}" class="image-thumbnail" style="height: 80px; width: 80px;">
+          </div>
+          <h5 class="card-title">{{worker.name}}</h5>
+          <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Commits: 
+              <span class="badge bg-success rounded-pill">{{worker.commits}}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Total Contributions:
+              <span class="badge bg-success rounded-pill">{{worker.total}}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Additions:
+              <span class="badge bg-success rounded-pill">{{worker.additions}}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Deletions:
+              <span class="badge bg-success rounded-pill">{{worker.deletions}}</span>
+            </li>
+          </ul>
+          <a href="#" class="btn btn-success">Analytics</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card border-danger mb-3" style="max-width: 18rem;">
+        <div class="text-center">
+          <img src="{{slacker.img}}" class="image-thumbnail" style="height: 80px; width: 80px;">
+        </div>
+        <div class="card-body">
+          <h5 class="card-title">Hardest Slacker</h5>
+          <ul class="list-group">
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              {{slacker.name}}
+          </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Commits: 
+              <span class="badge bg-danger rounded-pill">{{slacker.commits}}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Total Contributions:
+              <span class="badge bg-danger rounded-pill">{{slacker.total}}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Additions:
+              <span class="badge bg-danger rounded-pill">{{slacker.additions}}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-center">
+              Deletions:
+              <span class="badge bg-danger rounded-pill">{{slacker.deletions}}</span>
+            </li>
+          </ul>
+          <a href="#" class="btn btn-danger">Analytics</a>
+        </div>
+      </div>
+    </div>
+</div>
+</div>
+{% endblock %}
