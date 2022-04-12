@@ -79,6 +79,7 @@
       <th scope="col">Additions</th>
       <th scope="col">Deletions</th>
       <th scope="col">Total</th>
+      <th scope="col">Page</th>
     </tr>
   </thead>
   <tbody>
@@ -89,6 +90,9 @@
         <td>{{ user.additions }}</td>
         <td>{{ user.deletions }}</td>
         <td>{{ user.total }}</td>
+        <td>
+          <a href="/users/{{ user.username }}" class="btn btn-{{ user.status }}">Analytics</a>
+        </td>
       </tr>
     {% endfor %}
   </tbody>
