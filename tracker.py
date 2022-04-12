@@ -157,14 +157,12 @@ class Tracker:
 
 
     def get_all_user_contributions(self, weeks_ago=4):
-        data = {"Users": list(), "Commits": list(), "Additions": list(), "Deletions": list(), "Total": list()}
+        data = list()
         for user in self.gitlab.get_users():
             user_analytics = self.compile_analytics_by_user(user['username'], weeks_ago=4)
-            data["Users"].append(user['username'])
-            data["Commits"].append(user_analytics["commits"])
-            data["Additions"].append(user_analytics["additions"])
-            data["Deletions"].append(user_analytics["deletions"])
-            data["Total"].append(user_analytics["total"])
+            user_analytics["username"] = user["username"]
+            data.append(user_analytics)
 
         return data
+
 

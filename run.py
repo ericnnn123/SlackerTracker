@@ -8,11 +8,26 @@ gitlab = Gitlab()
 tracker = Tracker(gitlab)
 
 data = tracker.get_all_user_contributions()
-all_users = tracker.get_all_user_contributions()
-hardest_worker = all_users["Users"][all_users["Total"].index(max(all_users["Total"]))]
-hardest_slacker = all_users["Users"][all_users["Total"].index(min(all_users["Total"]))]
+all_users = sorted(tracker.get_all_user_contributions(), key = lambda user: user['total'])[::-1]
+hardest_worker = all_users[0]['username']
+hardest_slacker = all_users[-1]['username']
 worker_analytics = tracker.compile_analytics_by_user(hardest_worker)
 slacker_analytics = tracker.compile_analytics_by_user(hardest_slacker)
+
+if len(all_users) == 4:
+    all_users[0]["status"] = "success"
+    all_users[1]["status"] = "info"
+    all_users[2]["status"] = "warning"
+    all_users[3]["status"] = "danger"
+elif len(all_users) == 3:
+    if all_users[0]["total"] - all_users[1]["total"] > all_users[1]["total"] - all_users[2]["total"]:
+        all_users[1]["status"] = "info"
+    else:
+        all_users[1]["status"] = "warning"
+elif len(all_users) == 2:
+    all_users[0]["status"] = "success"
+    all_users[-1]["status"] = "danger"
+
 
 app = Flask(__name__)
 
@@ -35,7 +50,7 @@ def dashboard():
         "additions": slacker_analytics['additions'],
         "deletions": slacker_analytics['deletions']
     }
-    return render_template('apps/dashboard.html', worker=worker, slacker=slacker)
+    return render_template('apps/dashboard.html', worker=worker, slacker=slacker, users=all_users)
 
 @app.route('/users')
 def users():

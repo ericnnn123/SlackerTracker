@@ -4,72 +4,94 @@
 {% block dashboard_active %}active{% endblock %}
 
 {% block content %}
-<div class="row align-items-center">
-  <div class="row justify-content-center">
-    <div class="col">
-      <div class="card border-success mb-3" style="max-width: 18rem;">
-        
-        <div class="card-body">
-          <div class="card-header">Hardest Worker</div>
-          <div class="text-center">
-            <img src="{{worker.img}}" class="image-thumbnail" style="height: 80px; width: 80px;">
-          </div>
-          <h5 class="card-title">{{worker.name}}</h5>
-          <ul class="list-group">
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              Commits: 
-              <span class="badge bg-success rounded-pill">{{worker.commits}}</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              Total Contributions:
-              <span class="badge bg-success rounded-pill">{{worker.total}}</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              Additions:
-              <span class="badge bg-success rounded-pill">{{worker.additions}}</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              Deletions:
-              <span class="badge bg-success rounded-pill">{{worker.deletions}}</span>
-            </li>
-          </ul>
-          <a href="#" class="btn btn-success">Analytics</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="col">
-      <div class="card border-danger mb-3" style="max-width: 18rem;">
+<div class="d-flex flex-row flex-wrap" style="margin-top: 50px;">
+  <div class="col d-flex justify-content-center text-center">
+    <div class="card border-success mb-3" style="width: 18rem;" style="padding-left: 50px; padding-right: 50px;">
+      <div class="card-header bg-transparent border-success">Hardest Worker</div>
+      <div class="card-body">
         <div class="text-center">
-          <img src="{{slacker.img}}" class="image-thumbnail" style="height: 80px; width: 80px;">
+          <img src="{{worker.img}}" class="image-thumbnail" style="height: 80px; width: 80px; margin-top: 50px; margin-bottom: 50px;">
         </div>
-        <div class="card-body">
-          <h5 class="card-title">Hardest Slacker</h5>
-          <ul class="list-group">
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              {{slacker.name}}
+        <h5 class="card-title">@{{worker.name}}</h5>
+
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Commits: 
+            <span class="badge bg-success rounded-pill">{{worker.commits}}</span>
           </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              Commits: 
-              <span class="badge bg-danger rounded-pill">{{slacker.commits}}</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              Total Contributions:
-              <span class="badge bg-danger rounded-pill">{{slacker.total}}</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              Additions:
-              <span class="badge bg-danger rounded-pill">{{slacker.additions}}</span>
-            </li>
-            <li class="list-group-item d-flex justify-content-between align-items-center">
-              Deletions:
-              <span class="badge bg-danger rounded-pill">{{slacker.deletions}}</span>
-            </li>
-          </ul>
-          <a href="#" class="btn btn-danger">Analytics</a>
-        </div>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Total Contributions:       
+            <span class="badge bg-success rounded-pill">{{worker.total}}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Additions:
+            <span class="badge bg-success rounded-pill">{{worker.additions}}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Deletions:
+            <span class="badge bg-success rounded-pill">{{worker.deletions}}</span>
+          </li>
+        </ul>
+      </div>
+      <div class="card-footer bg-transparent border-success">
+        <a href="#" class="btn btn-success">Analytics</a>
       </div>
     </div>
+  </div>
+
+  <div class="col d-flex justify-content-center text-center">
+    <div class="card border-danger mb-3" style="width: 18rem;">
+      <div class="card-header bg-transparent border-danger">Hardest Slacker</div>
+      <div class="card-body">
+        <img src="{{slacker.img}}" class="image-thumbnail text-center" style="height: 80px; width: 80px; margin-top: 50px; margin-bottom: 50px;">
+        <h5 class="card-title">@{{slacker.name}}</h5>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Commits: 
+            <span class="badge bg-danger rounded-pill">{{slacker.commits}}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Total Contributions:
+            <span class="badge bg-danger rounded-pill">{{slacker.total}}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Additions:
+            <span class="badge bg-danger rounded-pill">{{slacker.additions}}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            Deletions:
+            <span class="badge bg-danger rounded-pill">{{slacker.deletions}}</span>
+          </li>
+        </ul>
+      </div>
+      <div class="card-footer bg-transparent border-danger">
+        <a href="#" class="btn btn-danger">Analytics</a>
+      </div>
+    </div>
+  </div>
 </div>
-</div>
+
+<table class="table table-hover" style="margin-top: 50px;">
+  <thead>
+    <tr>
+      <th scope="col">Username</th>
+      <th scope="col">Commits</th>
+      <th scope="col">Additions</th>
+      <th scope="col">Deletions</th>
+      <th scope="col">Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for user in users %}
+      <tr class="table-{{ user.status }}">
+        <th scope="row">{{ user.username }}</th>
+        <td>{{ user.commits }}</td>
+        <td>{{ user.additions }}</td>
+        <td>{{ user.deletions }}</td>
+        <td>{{ user.total }}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
 {% endblock %}
