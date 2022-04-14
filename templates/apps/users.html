@@ -4,14 +4,93 @@
 {% block users_active %}active{% endblock %}
 
 {% block content %}
-<div class="dropdown" style="margin-top:75px;">
-  <button class="btn btn-secondary btn-lg dropdown-toggle" type="button" id="userlist" data-bs-toggle="dropdown" aria-expanded="false">
-  {{current_user.username}}
-  </button>
-  <ul class="dropdown-menu" aria-labelledby="userlist">
-    {% for user in users %}
-      <li><a class="dropdown-item" href="/users/{{user.username}}">{{user.username}}</a></li>
-    {% endfor %}
-  </ul>
+<div class="d-flex flex-row flex-wrap" style="margin-top:75px;">
+  <div class="col d-flex justify-content-start">
+    <div class="dropdown">
+      <button class="btn btn-outline-{{current_user.status}} btn-lg dropdown-toggle" type="button" id="userlist" data-bs-toggle="dropdown" aria-expanded="false">
+      {{current_user.username}}
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="userlist">
+        {% for user in users %}
+          <li><a class="dropdown-item" href="/users/{{user.username}}">{{user.username}}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="col d-flex justify-content-end">
+    <h4>Rank: {{ rank.place }}/{{ rank.total }}</h4>
+  </div>
 </div>
+
+<h3 class="text-center">Contributions Over Time</h3>
+<div class="d-flex justify-content-center">
+  <div class="chart-container" style="width: 80vw; height: 50vh;">
+    <canvas id="lineChart"></canvas>
+  </div>
+  <script>
+    var ctx = document.getElementById('lineChart').getContext('2d');
+    var lineChart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: {{ line_graph.dates | safe }},
+        datasets: [  
+          {
+            label: "Additions",
+            data: {{ line_graph.additions | safe }},
+            borderColor: "green",
+            lineTension: 0.5
+          },
+          {
+            label: "Deletions",
+            data: {{ line_graph.deletions | safe }},
+            borderColor: "red",
+            lineTension: 0.5
+          },
+          {
+            label: "Total",
+            data: {{ line_graph.total | safe }},
+            borderColor: "yellow",
+            lineTension: 0.5
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+      }
+    });
+  </script>
+</div>
+
+<h3 class="text-center">Additions vs Deletions</h3>
+<div class="d-flex justify-content-center">
+  <div class="chart-container" style="width: 25vw; height: 25vh;">
+    <canvas id="pieChart"></canvas>
+  </div>
+  <script>
+    var ctx = document.getElementById('pieChart').getContext('2d');
+    var pieChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Additions', "Deletions"],
+            datasets: [{
+              label: 'Contribution Comparison',
+              data: {{ pie_graph | safe }},
+              backgroundColor: ["green", "red"],
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true
+        }
+    });
+  </script>
+</div>
+
+
+<!-- <div class="d-flex justify-content-center">
+  <h3 class="text-center">Slacker History</h3>
+  <p>test test test</p>
+</div> -->
+
 {% endblock %}

@@ -30,8 +30,7 @@ class Tracker:
 
 
     def dataset_user_contributions(self, username, weeks_ago=4):
-        analytics = {"additions": [], "deletions": [], "total": []}
-        dates = list()
+        analytics = {"additions": [], "deletions": [], "total": [], "dates": []}
         user = self.gitlab.get_user_by_username(username)
         contributions = self.gitlab.get_user_contributions(user, weeks_ago)
         for contribution in contributions:
@@ -46,9 +45,9 @@ class Tracker:
                     analytics["additions"].append(commit["stats"]["additions"])
                     analytics["deletions"].append(commit["stats"]["deletions"])
                     analytics["total"].append(commit["stats"]["total"])
-                    dates.append(date)
+                    analytics["dates"].append(date)
 
-        return analytics, dates
+        return analytics
 
 
     def compile_analytics_by_user_project_contributions(self, username, sort=True, weeks_ago=4):
