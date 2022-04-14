@@ -30,13 +30,15 @@ def user(user_id):
     pie_data = tracker.compile_analytics_by_user(current_user["username"])
     line_data = tracker.dataset_user_contributions(current_user["username"])
     place, total_users = get_user_rank(current_user["username"], all_users)
+    current_user_data = gitlab.get_user_by_username(current_user['username'])
     return render_template(
         'apps/users.html', 
         current_user=current_user,
         rank={"place": place, "total": total_users},
         users=users_with_status, 
         line_graph=line_data, 
-        pie_graph=[pie_data['additions'], pie_data['deletions']]
+        pie_graph=[pie_data['additions'], pie_data['deletions']],
+        gitlab = current_user_data
     )
 
 

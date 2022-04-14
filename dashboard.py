@@ -24,10 +24,12 @@ def construct_table_information(users):
                 users[index]["status"] = "danger"
 
     if len(users) == 3:
+        users[0]["status"] = "success"
         if users[0]["total"] - users[1]["total"] > users[1]["total"] - users[2]["total"]:
             users[1]["status"] = "info"
         else:
             users[1]["status"] = "warning"
+        users[-1]["status"] = "danger"
 
     if len(users) == 2:
         users[0]["status"] = "success"
