@@ -1,63 +1,50 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, redirect
 
 from tracker import Tracker
 from gitlab import Gitlab
-
+from dashboard import construct_table_information, construct_worker_and_slacker
+from users import get_user_rank
+        
 
 gitlab = Gitlab()
 tracker = Tracker(gitlab)
-
-data = tracker.get_all_user_contributions()
 all_users = sorted(tracker.get_all_user_contributions(), key = lambda user: user['total'])[::-1]
-hardest_worker = all_users[0]['username']
-hardest_slacker = all_users[-1]['username']
-worker_analytics = tracker.compile_analytics_by_user(hardest_worker)
-slacker_analytics = tracker.compile_analytics_by_user(hardest_slacker)
-
-if len(all_users) == 4:
-    all_users[0]["status"] = "success"
-    all_users[1]["status"] = "info"
-    all_users[2]["status"] = "warning"
-    all_users[3]["status"] = "danger"
-elif len(all_users) == 3:
-    if all_users[0]["total"] - all_users[1]["total"] > all_users[1]["total"] - all_users[2]["total"]:
-        all_users[1]["status"] = "info"
-    else:
-        all_users[1]["status"] = "warning"
-elif len(all_users) == 2:
-    all_users[0]["status"] = "success"
-    all_users[-1]["status"] = "danger"
-
-
+users_with_status = construct_table_information(all_users)
 app = Flask(__name__)
 
 @app.route('/')
 @app.route('/dashboard')
 def dashboard():
-    worker = {
-        "name": hardest_worker,
-        "img": gitlab.get_user_by_username(hardest_worker)['avatar_url'],
-        "commits": worker_analytics['commits'],
-        "total": worker_analytics['total'],
-        "additions": worker_analytics['additions'],
-        "deletions": worker_analytics['deletions']
-    }
-    slacker = {
-        "name": hardest_slacker,
-        "img": gitlab.get_user_by_username(hardest_slacker)['avatar_url'],
-        "commits": slacker_analytics['commits'],
-        "total": slacker_analytics['total'],
-        "additions": slacker_analytics['additions'],
-        "deletions": slacker_analytics['deletions']
-    }
-    return render_template('apps/dashboard.html', worker=worker, slacker=slacker, users=all_users)
+    worker, slacker = construct_worker_and_slacker(gitlab, tracker, all_users)
+    return render_template('apps/dashboard.html', worker=worker, slacker=slacker, users=users_with_status)
+
 
 @app.route('/users')
 def users():
-    return render_template('apps/users.html')
+    return redirect(f"/users/{all_users[-1]['username']}")
+
+
+@app.route('/users/<user_id>')
+def user(user_id):
+    current_user = list(filter(lambda person: person['username'] == user_id, users_with_status))[0]
+    pie_data = tracker.compile_analytics_by_user(current_user["username"])
+    line_data = tracker.dataset_user_contributions(current_user["username"])
+    place, total_users = get_user_rank(current_user["username"], all_users)
+    current_user_data = gitlab.get_user_by_username(current_user['username'])
+    return render_template(
+        'apps/users.html', 
+        current_user=current_user,
+        rank={"place": place, "total": total_users},
+        users=users_with_status, 
+        line_graph=line_data, 
+        pie_graph=[pie_data['additions'], pie_data['deletions']],
+        gitlab = current_user_data
+    )
+
 
 @app.route('/projects')
 def projects():
     return render_template('apps/projects.html')
 
 app.run(debug=True)
+gitlab.quit()

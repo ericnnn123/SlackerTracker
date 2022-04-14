@@ -1,17 +1,18 @@
 import requests
 
 from datetime import date, timedelta
-from collections import UserString
-
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
+from config import Config
+
 class Gitlab:
 
-    def __init__(self, token="XE1gh443s8fbVfrxYyHC"):
-        self.token = token
-        self.base_url = "https://192.168.23.130/api/v4"
+    def __init__(self):
+        self.config = Config()
+        self.token = self.config.gitlab_token
+        self.base_url = f"{self.config.gitlab_url}/api/v4"
         self.session = self.start_session()
 
 

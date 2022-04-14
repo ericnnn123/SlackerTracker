@@ -1,10 +1,13 @@
 <!doctype html>
-<title>Slacker Tracker - {% block title %}{% endblock %}</title>
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap.min.css') }}">
-<script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
-<section class="content">
-<body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<html>
+  <head>
+    <title>Slacker Tracker - {% block title %}{% endblock %}</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='bootstrap.min.css') }}">
+    <script src="{{ url_for('static', filename='bootstrap.bundle.js') }}"></script>
+    <script src="{{ url_for('static', filename='Chart.js') }}"></script>
+  </head>
+  <body>
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <div class="container-fluid">
           <a class="navbar-brand" href="/">Slacker Tracker</a>
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -26,8 +29,8 @@
         </div>
       </nav>
 
-    <div class="container">
-        {% block content %}{% endblock %}
-    </div>
-</body>
-</section>
+      <div class="container">
+          {% block content %}{% endblock %}
+      </div>
+  </body>
+</html>

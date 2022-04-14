@@ -4,5 +4,136 @@
 {% block users_active %}active{% endblock %}
 
 {% block content %}
+<div class="d-flex flex-row flex-wrap" style="margin-top:75px;">
+  <div class="col d-flex justify-content-start">
+    <div class="dropdown">
+      <button class="btn btn-outline-{{current_user.status}} btn-lg dropdown-toggle" type="button" id="userlist" data-bs-toggle="dropdown" aria-expanded="false">
+      {{current_user.username}}
+      </button>
+      <ul class="dropdown-menu" aria-labelledby="userlist">
+        {% for user in users %}
+          <li><a class="dropdown-item" href="/users/{{user.username}}">{{user.username}}</a></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <div class="col d-flex justify-content-end">
+    <h4>Rank: {{ rank.place }}/{{ rank.total }}</h4>
+  </div>
+</div>
+
+<h3 class="text-center">Contributions Over Time</h3>
+<div class="d-flex justify-content-center">
+  <div class="chart-container" style="width: 80vw; height: 50vh;">
+    <canvas id="lineChart"></canvas>
+  </div>
+  <script>
+    var ctx = document.getElementById('lineChart').getContext('2d');
+    var lineChart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels: {{ line_graph.dates | safe }},
+        datasets: [  
+          {
+            label: "Additions",
+            data: {{ line_graph.additions | safe }},
+            borderColor: "green",
+            lineTension: 0.5
+          },
+          {
+            label: "Deletions",
+            data: {{ line_graph.deletions | safe }},
+            borderColor: "red",
+            lineTension: 0.5
+          },
+          {
+            label: "Total",
+            data: {{ line_graph.total | safe }},
+            borderColor: "yellow",
+            lineTension: 0.5
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+      }
+    });
+  </script>
+</div>
+
+
+<div class="d-flex flex-row" style="margin-top: 50px;">
+  <div class="col d-flex justify-content-center text-center">
+    <div class="chart-container" style="height: 400px; width: 350px;">
+      <h3>Additions vs Deletions</h3>
+      <canvas id="pieChart"></canvas>
+    </div>
+    <script>
+      var ctx = document.getElementById('pieChart').getContext('2d');
+      var pieChart = new Chart(ctx, {
+          type: 'pie',
+          data: {
+              labels: ['Additions', "Deletions"],
+              datasets: [{
+                label: 'Contribution Comparison',
+                data: {{ pie_graph | safe }},
+                backgroundColor: ["green", "red"],
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true
+          }
+      });
+    </script>
+  </div>
+  <div class="col d-flex justify-content-center">
+    <h4 class="text-center">User Activity</h4>
+    <ul class="list-group">
+      <li class="list-group-item">Last Event Activity: {{ gitlab.last_activity_on }}</li>
+      <li class="list-group-item">Last Sign In: {{ gitlab.last_sign_in_at }}</li>
+    </ul>
+  </div>
+</div>
+
+  
+<h4>Contributed Projects</h4>
+<div class="d-flex justify-content-center">
+  <div class="chart-container" style="width: 80vw; height: 50vh;">
+    <canvas id="barChart"></canvas>
+  </div>
+  <script>
+    var ctx = document.getElementById("barChart").getContext("2d");
+    var pieChart = new Chart(ctx, {
+      type: "bar",
+      labels: ["Chocolate", "Vanilla", "Strawberry"],
+      datasets: [
+          {
+              label: "Blue",
+              fillColor: "blue",
+              data: [3,7,4]
+          },
+          {
+              label: "Red",
+              fillColor: "red",
+              data: [4,3,5]
+          },
+          {
+              label: "Green",
+              fillColor: "green",
+              data: [7,2,6]
+          }
+      ]
+    });
+  </script>
+</div>
+</div>
+
+
+<!-- <div class="d-flex justify-content-center">
+  <h3 class="text-center">Slacker History</h3>
+  <p>test test test</p>
+</div> -->
 
 {% endblock %}

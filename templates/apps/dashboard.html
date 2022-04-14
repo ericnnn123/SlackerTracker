@@ -34,7 +34,7 @@
         </ul>
       </div>
       <div class="card-footer bg-transparent border-success">
-        <a href="#" class="btn btn-success">Analytics</a>
+        <a href="/users/{{worker.name}}" class="btn btn-success">Analytics</a>
       </div>
     </div>
   </div>
@@ -65,13 +65,14 @@
         </ul>
       </div>
       <div class="card-footer bg-transparent border-danger">
-        <a href="#" class="btn btn-danger">Analytics</a>
+        <a href="/users/{{slacker.name}}" class="btn btn-danger">Analytics</a>
       </div>
     </div>
   </div>
 </div>
 
-<table class="table table-hover" style="margin-top: 50px;">
+<h3 class="text-center">All Users</h3>
+<table class="table table-hover" style="margin-top: 50px; overflow: hidden; overflow-y: scroll; height: 50px;">
   <thead>
     <tr>
       <th scope="col">Username</th>
@@ -79,6 +80,7 @@
       <th scope="col">Additions</th>
       <th scope="col">Deletions</th>
       <th scope="col">Total</th>
+      <th scope="col">Page</th>
     </tr>
   </thead>
   <tbody>
@@ -89,9 +91,14 @@
         <td>{{ user.additions }}</td>
         <td>{{ user.deletions }}</td>
         <td>{{ user.total }}</td>
+        <td>
+          <a href="/users/{{ user.username }}" class="btn btn-outline-{{ user.status }}">Analytics</a>
+        </td>
       </tr>
     {% endfor %}
   </tbody>
 </table>
+
+<h3 class="text-center">Recent Slackers</h3>
 
 {% endblock %}
