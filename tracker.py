@@ -1,5 +1,4 @@
 from dateutil import parser
-from gitlab import Gitlab
 
 
 class Tracker:
@@ -164,3 +163,22 @@ class Tracker:
 
         return data
 
+
+    def format_user_projects_bar_chart(self, username, weeks_ago=4):
+        chart = {
+            "projects": list(),
+            "additions": list(),
+            "deletions": list(),
+            "totals": list()
+        }
+        project_contribution_data = self.compile_analytics_by_user_project_contributions(username, weeks_ago)
+        
+        for project in project_contribution_data:
+            chart['projects'].append(project['project'])
+            chart["additions"].append(project["additions"])
+            chart["deletions"].append(project["deletions"])
+            chart["totals"].append(project["total"])
+
+        return chart
+
+    
